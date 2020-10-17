@@ -390,6 +390,21 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    //create a storage object {'1, 2': 3, '3, 4': 7}
+    var storage = {};
+    //create the function that we will return
+    var outputFunction = function() {
+      //create variable that is the stringified arguments
+      var args = JSON.stringify(arguments);
+      //if func with those arguments is not in the storage object
+      if (!storage[args]) {
+        //store it
+        storage[args] = func.apply(this, arguments);
+      }
+      //return
+      return storage[args];
+    };
+    return outputFunction;
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -399,6 +414,13 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+    //create array with extra arguments
+    var slicer = Array.prototype.slice;
+    var args = slicer.call(arguments, 2);
+    //return setTimeout passing in func with args and wait
+    return setTimeout (function() {
+      func.apply(this, args);
+    }, wait);
   };
 
 
@@ -420,8 +442,23 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    //create output array
+    var output = [];
+    //iterate array
+    for (let i = 0; i < array.length; i++) {
+      //create random index
+      var index = Math.floor(Math.random() * array.length);
+      //while the value of output[index] is not undefined
+      while (output[index] !== undefined) {
+        //create random number
+        index = Math.floor(Math.random() * array.length);
+      }
+      //assign element to output array at random
+      output[index] = array[i];
+    }
+    //return output array
+    return output;
   };
-
 
   /**
    * ADVANCED
